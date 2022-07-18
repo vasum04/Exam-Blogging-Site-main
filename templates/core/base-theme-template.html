@@ -1,0 +1,40 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- <a href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}">{% static 'vendor/bootstrap/css/bootstrap.min.css' %}</a> -->
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <title>{% block page_title %}{%endblock%}</title>
+  <!-- Bootstrap core CSS -->
+  <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+  <link href="{% static 'css/global.css' %}" rel="stylesheet" />
+  <script src="{% static 'vendor/jquery/jquery.min.js' %}" ></script>
+  <script src="{% static 'vendor/jquery/jquery.slim.min.js' %}" ></script>
+
+  <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+  <!-- Navigation -->
+  {% include 'core/base-header.html' %}
+  {% block header_nav %}{% endblock %}
+  
+  <!-- Page Content -->
+    <div class="container">
+      &nbsp;<br>
+      {% block content %}
+      {% endblock %}
+    </div>
+  <!-- Bootstrap core JavaScript -->
+  <!-- <script src="{% static 'vendor/jquery/jquery.slim.min.js' %}"></script> -->
+  <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,107 @@
+{% extends 'core/base-theme-template.html' %}
+{% load static %}
+{% block page_title %}{{ question.question }}{% endblock %}
+
+{% block content %}
+    
+    <script src="{% static 'js/upvote.js' %}" type="text/javascript"></script>
+
+    
+<!-- Modal -->
+  <div class="modal fade" id="editAnswer" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title">Edit Content</h4>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        <div class="modal-body">
+        <input type="hidden" id="ansId" name="ansId" value="" />
+          <p id="modal_text"></p>
+          <input type="text" id="the_answer" class="form-control col-12" placeholder="Your answer here..." >
+          <br>
+          <!-- <input type="checkbox" id="the_anonymous" class="" >
+          <label for="the_anonymous">Anonymous</label> -->
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal" id="editAnsWithAjax" >Save</button>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+  
+<!-- </div> -->
+<!-- Modal End -->
+
+    <h1>{{ question.question }}</h1>
+    <small>Asked by {% if question.anonymous == True %}Anonymous{% else %}<a href="{% url 'profile_page' question.author.username %}">{{ question.author.username }}</a>{% endif %} on {{ question.time }}</small>
+    <br>
+    <small id="question_upvotes" class="btn {% if question_upvoted %}btn-success{% else %}btn-primary{% endif %}" onclick="do_upvote_ajax('question', '{{ question.id }}', this)"><span class="upvote_number">{{ question.upvote }}</span> upvote{% if question.upvote > 1 %}s{% endif %}&uArr;</small>
+    {% if question.category %} 
+    <small id="question_category" >Category: <a href="{% url 'view_category' question.category %}">{{ question.category.category }}</a></small> 
+    {% endif %}
+    {% if request.user.username == question.author.username %}
+    <small> | <a href="{% url 'question_action_param' 'edit' question.id %}">Edit Blog</a></small>
+    {% endif %}
+    <hr>
+    {% if answers %}
+    <div class="container">
+        <h4 class="font-weight-bold">Content &raquo;</h4>
+        {% for answer in answers %}
+            {% with answer.id as answer_id %}
+            <div class="single_answer {% if answer.isBestAnswer %}border rounded border-success{% endif %}" {% if answer.isBestAnswer %} style="padding-bottom: 10px;" {% endif %}>
+              {% if answer.isBestAnswer %}
+              <span class="best-answer"><span class="fa fa-check text-success" title="Best Answer. Selected by the question Author."></span></span>
+              {% endif %}
+                <span id="answer_{{ answer_id }}" class="answers answer q_ans">{{ answer.answer | linebreaks  }}</span>
+                <br>
+                <small>&nbsp;&nbsp;by {% if answer.anonymous == True %}Anonymous{% else %}<a href="{% url 'profile_page' answer.author.username %}">{{ answer.author.username }}</a>{% endif %} on {{ answer.time }}</small>
+                {% if request.user.username == answer.author.username %}
+                <button type="button" class="btn btn-warning btn-sm" onclick="editAnswer('{{ answer_id }}', {% if answer.anonymous == True %}true{% endif %})" >Edit</button>
+                <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete('answer', '{{ answer_id }}')" >Delete</button>           
+                {% endif %}
+                
+                <!-- {% if request.user.username == question.author.username %}
+                  {% if not answer.isBestAnswer %}
+                <button type="button" class="btn btn-success btn-sm" onclick="chooseBestAnswer( '{{ answer_id }}')" >Best Answer</button>           
+                  {% else %}
+                  <button type="button" class="btn btn-danger btn-sm" onclick="chooseBestAnswer( '{{ answer_id }}')" >Not Best Answer</button>           
+                  {% endif %}
+                {% endif %} -->
+            <br>
+            &nbsp;&nbsp;<small id="answer_upvotes_{{ answer_id }}" class="btn {% if answer_id in upvoted_answers %}btn-success{% else %}btn-primary{% endif %} btn-sm" style="padding: 5px;" onclick="do_upvote_ajax('answer', '{{ answer.id }}', this)" ><span class="upvote_number">{{ answer.upvote }}</span> upvote{% if answer.upvote > 1 %}s{% endif %} &uArr;</small>
+            <br>
+          </div>
+            <hr>
+            {% endwith %}
+        {% endfor %}
+    </div>
+    {% else %}
+        <h4>No Content yet.</h4>
+    {% endif %}
+
+    {% if request.user.id %}
+    <p>Add content of your choice</p>
+    <form method="POST" action="" >
+        {% csrf_token %}
+        <input type="hidden" name="ques_id" value="{{ question.id }}" />
+        <div class="form-group">
+            <textarea class="form-control col-lg-9 col-md-10 col-sm-12 col-xs-12" name="new_answer" placeholder="" ></textarea>
+        </div>
+        <!-- <div class="form-group">
+            <input type="checkbox" name="anonymous" id="ans_anonymous" > <small><label for="ans_anonymous">Answer as Anonymous</label></small> 
+        </div> -->
+        <div class="form-group">
+            <input type="submit" class="btn btn-primary" />
+        </div>
+    </form>
+    {% else %}
+    <p>Login to write an answer... <a href="{% url 'login_page' %}">Click here to continue</a></p>
+    {% endif %}
+
+    <script type="text/javascript" src="{% static 'vendor/jquery/jquery.min.js' %}" ></script>
+    <script type="text/javascript" src="{% url 'dynamic_script' %}" ></script>
+{% endblock %}

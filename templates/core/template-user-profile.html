@@ -1,0 +1,50 @@
+{% extends 'core/base-theme-template.html' %}
+
+{% block page_title %}
+{% if user.first_name == "" and user.last_name == "" %}
+    {{ user.username }}
+{% else %}
+    {{ user.first_name }} {{ user.last_name }}
+{% endif %}
+{% endblock %}
+
+{% block content %}
+{% if user.first_name == "" and user.last_name == "" %}
+    <h1>{{ user.username }}</h1>
+{% else %}
+    <h1>{{ user.first_name }} {{ user.last_name }}</h1>
+{% endif %}
+<hr>
+<div id="contact">
+    <!-- <h3>Username: </h3> -->
+    <table class="table table-borderless table-hover col-sm-12 col-md-12 col-lg-9">
+        <tr>
+            <td>Username</td>
+            <td>{{ user.username }}</td>
+        </tr>
+        <tr>
+            <td>Email</td>
+            <td>{% if user.email == "" %}N/A{% else %}{{ user.email }}{% endif %}</td>
+        </tr>
+        <tr>
+            <td>{{ questions_asked_number }} blogs asked</td>
+            <td></td>
+        </tr>
+        <!-- <tr>
+            <td>{{ answers_answered }} answers answered</td>
+            <td></td>
+        </tr> -->
+    </table>
+</div>
+<hr>
+<hr>
+
+{% if questions_asked %}
+    <p>Blogs Posted:</p>
+    {% for question in questions_asked %}
+        {% with question.upvote as upvotes %} 
+        <h3>&#8227; <a href="{% url 'view_question' question.slug %}" class="text-dark" >{{ question.question }}</a> <small class="ques_upvotes btn btn-sm bg-dark text-light">{{ upvotes }} upvote{% if upvotes > 1 %}s{% endif %}</small></h3>
+        {% endwith %}
+    {% endfor %}
+{% endif %}
+{% endblock %}

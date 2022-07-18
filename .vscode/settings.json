@@ -1,0 +1,5 @@
+{
+    "git.ignoreLimitWarning": true,
+    "python.linting.enabled": false
+    // "python.defaultInterpreterPath": "f:/projects/python/University/Sem 6/webdev/Scripts/"
+}
